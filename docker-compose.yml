@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  # Frontend Nginx with Rate Limiting
+  nginx-frontend:
+    image: nginx:alpine
+    container_name: nginx-frontend
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend.conf:/etc/nginx/nginx.conf:ro
+      - ./frontend-html:/usr/share/nginx/html
+    depends_on:
+      - nginx-backend
+    networks:
+      - app-network
+
+  # Backend Nginx (Application Server)
+  nginx-backend:
+    image: nginx:alpine
+    container_name: nginx-backend
+    ports:
+      - "8181:8181"  # Exposed for direct testing
+    volumes:
+      - ./backend.conf:/etc/nginx/nginx.conf:ro
+      - ./backend-html:/usr/share/nginx/html
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
